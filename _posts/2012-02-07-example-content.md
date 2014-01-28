@@ -3,8 +3,7 @@ layout: post
 title: Some wonderful javascript tutorials
 ---
 
-Each tutorial is formatted in the same way. On the left is a description which explains the 
-code on the right. This page is further formatted to show for each algorithm
+Tutorial format:  description on the left, explaining the code on the right.
 
 ## example.js
 
