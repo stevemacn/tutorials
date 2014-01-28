@@ -1,0 +1,25 @@
+# Dependencies
+markdown:         redcarpet
+pygments:         true
+
+# Permalinks
+permalink:        pretty
+
+# Setup
+title:            tutorial.js
+tagline:          'Javascript tutorials'
+description:      'A series of javascript libraries predominantly for 
+    machine learning; turned into tutorials using <a href="http://https://github.com/jashkenas/docco" target="_blank">docco</a> comments. <hr/>Made by <a href="https://twitter.com/stephen_macneil">@stephen_macneil</a>'
+url:              http://stephenmacneil.net
+
+author:
+  name:           'Stephen MacNeil'
+  url:            https://about.me/stevemacn
+
+paginate:         5
+
+# Custom vars
+#version:          1.0.0
+
+github:
+  repo:           https://github.com/stevemacn
