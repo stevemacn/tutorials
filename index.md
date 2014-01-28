@@ -15,7 +15,7 @@ Example
 
 The tutorials will have have the following form...
 
-![kmeans tutorial](/media/kmeans.png "kmeans tutorial")
+![kmeans tutorial](/media/kmeans.png "kmeans tutorial" =250x)
 
 kmeans
 ---
