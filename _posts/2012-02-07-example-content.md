@@ -24,8 +24,8 @@ github - [https://github.com/stevemacn/kmeans](https://github.com/stevemacn/kmea
 ## pagerank.js
 > This algorithm is used by google to determine the prestige of pages. This algorithm can be used for determining areas of influence in a graph. Such as determining the person who is most influential in a social media network. Like Kmeans, this algorithm relies of values converging. 
 
-npm - [https://npmjs.org/package/pagerank-js](https://npmjs.org/package/pagerank-js)
-tutorial - [http://stevemacn.github.io/docs/pagerank.html](http://stevemacn.github.io/docs/pagerank.html)
+npm - [https://npmjs.org/package/pagerank-js](https://npmjs.org/package/pagerank-js)  
+tutorial - [http://stevemacn.github.io/docs/pagerank.html](http://stevemacn.github.io/docs/pagerank.html)  
 github - [https://github.com/stevemacn/pagerank](https://github.com/stevemacn/pagerank)
 
 
