@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>pagerank.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>pagerank.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <p>pagerank.js 0.0.1</p>
+<p>Use a random surfer algorithm to determine the relative 
+rank of nodes. The importance of each node is determined
+by the number of incoming links as well as the importance 
+of those incoming links. </p>
+<h2 id="expose">Expose</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Expose our library to be called externally</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>module.exports = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(nodeMatrix, linkProb, tolerance, callback, debug)</span> {</span>
+    <span class="hljs-keyword">if</span> (!nodeMatrix || !linkProb || !tolerance || !callback) 
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"Provide 4 arguments: "</span>+
+            <span class="hljs-string">"nodeMatrix, link probability, tolerance, callback"</span>)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>If debug is unset set it to false</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (!debug) debug=<span class="hljs-literal">false</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Pagerank(nodeMatrix, linkProb, tolerance, callback, debug)
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <h2 id="initialize">Initialize</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Pagerank</span> <span class="hljs-params">(nodeMatrix, linkProb, tolerance, callback, debug)</span> {</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p><strong>OutgoingNodes:</strong> represents an array of nodes. Each node in this 
+array contains an array of nodes to which the corresponding node has
+outgoing links.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.outgoingNodes = nodeMatrix</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p><strong>LinkProb:</strong> a value ??</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.linkProb = linkProb</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p><strong>Tolerance:</strong> the point at which a solution is deemed optimal. 
+Higher values are more accurate, lower values are faster to computer. </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.tolerance = tolerance
+    <span class="hljs-keyword">this</span>.callback = callback</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>Number of outgoing nodes</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.pageCount = <span class="hljs-keyword">this</span>.outgoingNodes.length</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p><strong>Coeff:</strong> coefficient for the likelihood that a page will be visited.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.coeff = (<span class="hljs-number">1</span>-linkProb)/<span class="hljs-keyword">this</span>.pageCount
+    
+    <span class="hljs-keyword">this</span>.probabilityNodes = [] 
+    <span class="hljs-keyword">this</span>.incomingNodes = []
+    <span class="hljs-keyword">this</span>.debug=debug
+    
+    <span class="hljs-keyword">this</span>.startRanking()
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <h2 id="start-ranking-">Start ranking </h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Pagerank.prototype.startRanking = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p>we initialize all of our probabilities</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">var</span> initialProbabilty = <span class="hljs-number">1</span>/<span class="hljs-keyword">this</span>.pageCount 
+        , outgoingNodes = <span class="hljs-keyword">this</span>.outgoingNodes</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p>rearray the graph and generate initial probability</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">for</span> (i <span class="hljs-keyword">in</span> outgoingNodes) {
+        <span class="hljs-keyword">this</span>.probabilityNodes.push(initialProbabilty)
+        <span class="hljs-keyword">for</span> (a <span class="hljs-keyword">in</span> outgoingNodes[i]) {
+            <span class="hljs-keyword">var</span> index = outgoingNodes[i][a]
+            <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.incomingNodes[index]) <span class="hljs-keyword">this</span>.incomingNodes[index]=[]
+            <span class="hljs-keyword">this</span>.incomingNodes[index].push(i)
+        }
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>if debug is set, print each iteration</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.debug) <span class="hljs-keyword">this</span>.reportDebug(<span class="hljs-number">1</span>)
+    
+    <span class="hljs-keyword">this</span>.iterate(<span class="hljs-number">1</span>)
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <h2 id="log-iteration-to-console-">Log iteration to console </h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Pagerank.prototype.reportDebug = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(count)</span> {</span>
+    console.log(<span class="hljs-string">"Pages: "</span> + <span class="hljs-keyword">this</span>.outgoingNodes.length)
+    console.log(<span class="hljs-keyword">this</span>.incomingNodes)
+    console.log(<span class="hljs-string">"____ITERATION "</span>+count+<span class="hljs-string">"____"</span>)
+    console.log(<span class="hljs-keyword">this</span>.probabilityNodes)
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <h2 id="calculate-new-weights-">Calculate new weights </h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Pagerank.prototype.iterate = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(count)</span> {</span>
+
+    <span class="hljs-keyword">var</span> result = []</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <p>For each node, we look at the incoming edges and 
+the weight of the node connected via each edge. 
+This weight is divided by the total number of 
+outgoing edges from each weighted node and summed to 
+determine the new weight of the original node.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">for</span> (b <span class="hljs-keyword">in</span> <span class="hljs-keyword">this</span>.probabilityNodes) {
+        <span class="hljs-keyword">var</span> sum = <span class="hljs-number">0</span>
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> a=<span class="hljs-number">0</span>; a&lt;<span class="hljs-keyword">this</span>.incomingNodes[b].length; a++) {
+            prob = <span class="hljs-keyword">this</span>.probabilityNodes[<span class="hljs-keyword">this</span>.incomingNodes[b][a]] 
+            ct = <span class="hljs-keyword">this</span>.outgoingNodes[<span class="hljs-keyword">this</span>.incomingNodes[b][a]].length
+            sum += (prob/ct)  
+        }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <p>determine if the new probability is within tolerance.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> res = <span class="hljs-keyword">this</span>.coeff+<span class="hljs-keyword">this</span>.linkProb*sum
+            , max = <span class="hljs-keyword">this</span>.probabilityNodes[b]+<span class="hljs-keyword">this</span>.tolerance
+            , min = <span class="hljs-keyword">this</span>.probabilityNodes[b]-<span class="hljs-keyword">this</span>.tolerance</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <p>if the result has changed push that result</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> (min &lt;= res &gt;= max) result.push(res)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p>update the probability for node <em>b</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">this</span>.probabilityNodes[b]=res
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <p>When we have all results (no weights are changing) we return via callback</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (result.length == <span class="hljs-keyword">this</span>.pageCount) 
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.callback(<span class="hljs-literal">null</span>, result)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <p>if debug is set, print each iteration</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.debug) <span class="hljs-keyword">this</span>.reportDebug(count) 
+    
+    <span class="hljs-keyword">this</span>.iterate(++count)
+}</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
