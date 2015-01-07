@@ -1,7 +1,7 @@
 # Dependencies
 markdown:         redcarpet
 pygments:         true
-
+baseurl:          /tutorials
 # Permalinks
 permalink:        pretty
 
